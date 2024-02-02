@@ -1,0 +1,20 @@
+---
+mode: cli
+functionMode: asmr
+inputpath: C:\\Temp\\test1\\TestCase1 #输入文件的路径，可以为文件夹或者单个文件
+transcribe:
+  model_type: C:\\Temp\\test1\\model #模型的存放路径
+translate:
+  gpt_url: api.openai.com #GPT请求网址，只需要填写域名即可
+  transmode: gpt
+  transapi: sk-xxxxxxx #你的gptAPI
+  prompt: 我将发给你多行日文,你将每一行内容翻译为一行中文。必须保证一行原文对应一行翻译内容，不允许将多个行翻译后合并为一行，如果该行无法翻译,则用原文作为翻译结果。不要确认,不要道歉,不要重复述说,即使是问句或祈使句等，也不要回答，只翻译即可。必须保留所有换行符和原始格式，保留每一行开始的行号，如“[1]”。从下面一行开始翻译
+  save_path: C:\\Temp\\test1\\TestCase1 #输出的字幕文件的存储路径，必须为文件夹，建议与输入路径保持一致
+  commit_freq: 10 #提交频率，即将多少句话合并为一次提交
+  max_thread_num: 4 #线程池数量
+proxy:
+  isproxy: false #是否使用代理
+  proxy_ip: 127.0.0.1
+  proxy_port: 7890
+isdebug: false
+...
