@@ -3,3 +3,6 @@ music
 config.yaml
 __pycache__/*
 __pycache__
+*.lrc
+todo_list.md
+*.log
