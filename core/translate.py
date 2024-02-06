@@ -136,7 +136,8 @@ class SeseTranslate():
                 try:
                     trans_dic[int(key)]=item[pos+1:]
                 except Exception as e:
-                    raise Exception(f"translated content has error lineNum: {str(item)}")
+                    # raise Exception(f"translated content has error lineNum: {str(item)}")
+                    print(f"translated content has error lineNum: {str(item)}") #仅打印错误翻译，不做处理
             
             #写入lrc文件
             for index,tim in enumerate(time_list):
@@ -157,7 +158,7 @@ class SeseTranslate():
 
     def save_list_as_log(self, data, log_file):
         with open(log_file,'w',encoding="utf-8") as fp:
-            
+            fp.write("[by AI]\n")
             for item in data:
                 fp.write("%s\n"%item)
 
