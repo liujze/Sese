@@ -5,42 +5,38 @@
 
 import os
 import ffmpeg
+# import moviepy.editor as mp
 
 class SeseSplitWma():
-    def __init__(self, filename) -> None:
+    def __init__(self, config) -> None:
         '''
         filetype: 0视频/1音频/2非法值
         '''
-        assert(len(filename)>=3)
-        self.filename=filename
-        self.audio_file=None
-        
-        if(filename[-3:].lower() in ["mp4","avi"]):
-            self.filetype = 0
-        elif(filename[-3:].lower() in ["mp3","wma","wav"]):
-            self.filetype = 1
-        else:
-            raise Exception("invalid filename")
-        
-        self.name = os.path.splitext(os.path.basename(filename))[0]
-        
-        #创建临时文件夹
-        curdir = os.getcwd()
-        tmp_dir = os.path.join(curdir, 'tmp')
-        if not os.path.exists(tmp_dir):
-            os.makedirs(tmp_dir)
+        pass
     
-    def run(self):
-        if(self.filetype==0):
-            self.split_wma()
+    def run(self, filename):
+        assert(len(filename)>=3)
+        out_path=self.split_wma(filename)
+        return out_path
         
             
-    def split_wma(self):
-        self.audio_file = f'{self.name}.mp3' 
-        in_file =ffmpeg.input(self.filename)
+    def split_wma(self,filename):
+        name = os.path.splitext(os.path.basename(filename))[0]
+        audio_file = f'{name}.mp3' 
+        out_path=os.path.join(os.path.dirname(filename),audio_file)
+        if(os.path.exists(out_path)):
+            print("[***] audio file is exist")
+            return out_path
+        
+        # out_path=os.path.join(os.path.dirname(filename),audio_file)
+        # video_fp = mp.VideoFileClip(filename)
+        # video_fp.audio.write_audiofile(out_path)
+        in_file =ffmpeg.input(filename)
         audio_stream = in_file.audio
-        out_file = ffmpeg.output(audio_stream, os.path.join('tmp',self.audio_file))
+        
+        out_file = ffmpeg.output(audio_stream, out_path,f='mp3')
         out_file.run()
+        return out_path
         
         
         

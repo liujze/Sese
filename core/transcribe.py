@@ -17,7 +17,7 @@ class SeseTranscribe():
         # if not os.path.exists(out_dir):
         #     os.makedirs(out_dir)
         
-    def run(self, audio_file):
+    def run(self, audio_file, process_video=False):
         out_filename=os.path.splitext(os.path.basename(audio_file))[0]
         out_path=os.path.join(os.path.dirname(audio_file),f"{out_filename}.lrc" )
         #判断输出文件是否存在且不为空
@@ -26,11 +26,17 @@ class SeseTranscribe():
             return self.RestoreLrcFile(out_path)
         print("[***] start transcribe file: %s"%(os.path.basename(audio_file)))
         # segments, info = model.transcribe("audio.mp3", beam_size=5)
-        segments, info = self.model.transcribe(audio_file, beam_size=5)
+        segments, info = self.model.transcribe(audio_file,"ja","transcribe",beam_size=5)
         
+        
+        if(process_video):
+            out_path=os.path.join(os.path.dirname(audio_file),f"{out_filename}.srt" )
+            srt_resu=self.save_to_srt(segments, out_path)
+            return srt_resu
         print(f"saving in {out_path}....")
         lrc_resu=self.save_to_lrc(segments, out_path)
         return lrc_resu
+        
     
     def format_time(self, seconds):
         # 将秒转换为 LRC 文件中使用的时间格式 [mm:ss.xx]
@@ -55,7 +61,7 @@ class SeseTranscribe():
                 timetick=self.format_time(segment.start)
                 lrc_file.write(f"%s %s\n" % (timetick,  segment.text))
                 lrc_list.append((segment.start,segment.text))
-        print("[***] origin lrc file comlete.")
+        print("[***] origin lrc file complete.")
         return lrc_list
 
     def RestoreLrcFile(self,outpath):
@@ -118,3 +124,28 @@ class SeseTranscribe():
                 base_time=item[0]
                 after_time_align.append(item)
         return after_time_align
+    
+    def seconds_to_srt_format(self, seconds):
+        hours = int(seconds // 3600)
+        minutes = int((seconds % 3600) // 60)
+        seconds = int(seconds % 60)
+        milliseconds = int((seconds % 1) * 1000)
+        
+        srt_format = "{:02d}:{:02d}:{:02d},{:03d}".format(hours, minutes, seconds, milliseconds)
+        
+        return srt_format
+    
+    def save_to_srt(self, transcription, srt_path):
+        srt_list=[]
+        # print("[***] the line number of transcribe is %d"%len(list(transcription)))
+        # import pdb;pdb.set_trace()
+        with open(srt_path, "w", encoding="utf-8") as srt_file:
+            for index, segment in enumerate(transcription):
+                timetick_st=self.seconds_to_srt_format(segment.start)
+                timetick_en = self.seconds_to_srt_format(segment.end)
+                srt_file.write("%d\n"%index)
+                srt_file.write(f"%s --> %s\n" % (timetick_st, timetick_en))
+                srt_file.write("%s\n\n"%segment.text)
+                srt_list.append((segment.start,segment.text, segment.end))
+        print("[***] origin lrc file complete.")
+        return srt_list
