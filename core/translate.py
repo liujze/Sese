@@ -28,6 +28,9 @@ class SeseTranslate():
             self.max_thread_num = config["translate"]["max_thread_num"]
                 
     def run(self,text_list, trans_save_path, process_video=False):
+        if(os.path.exists(trans_save_path)):
+            print("%s is exist!"%(trans_save_path))
+            return
         
         if(isinstance(text_list, str)):
             resu=self.get_response(text_list)
@@ -105,7 +108,9 @@ class SeseTranslate():
             result=self.process_response(completion)
             
         except Exception as e:
-            raise Exception(f"Chatgpt Error: {str(e)}")
+            # raise Exception(f"Chatgpt Error: {str(e)}")
+            print(f"Chatgpt Error: {str(e)}")
+            return ""
         return result
     
     

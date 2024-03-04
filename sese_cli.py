@@ -42,6 +42,8 @@ class SeseCli:
         elif(os.path.isdir(self.input_path)):
             lrc_reu=[]
             for item in os.listdir(self.input_path):
+                if(self.filetype_check(item)!=1):
+                    continue
                 single_lrc_resu=self.whip_model.run(os.path.join(self.input_path,item))
                 trans_save_path=os.path.join(self.translate_save_path, os.path.splitext(item)[0]+"_transed.lrc")
                 self.translate_module.run(single_lrc_resu,trans_save_path)
