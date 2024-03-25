@@ -1,6 +1,5 @@
 music/*
 music
-config.yaml
 __pycache__/*
 __pycache__
 *.lrc
